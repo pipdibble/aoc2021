@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 int main (int argc, char** argv)
 {
@@ -54,6 +53,7 @@ int main (int argc, char** argv)
     }
   }
   printf("Part 2 answer: %d\n", count_of_increases);
+  fclose(fp);
 
   return 0;
 }

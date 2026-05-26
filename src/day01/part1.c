@@ -21,6 +21,7 @@ int main (int argc, char** argv)
     last_depth = depth;
   }
   printf("Part 01: %d", count_of_increases);
+  fclose(fp);
 
   return 0;
 }
