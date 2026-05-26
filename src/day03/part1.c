@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
 int main(int argc, char** argv)
@@ -19,7 +18,7 @@ int main(int argc, char** argv)
     return 1;
   }
   while (fscanf(fp, "%s", report_line) != EOF) {
-    for (int i = 0; i < strlen(report_line); i++) {
+    for (int i = 0; i < bit_depth; i++) {
       if (report_line[i] == '1')
         one_counts[i]++;
     }
