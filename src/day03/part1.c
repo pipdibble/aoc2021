@@ -15,6 +15,7 @@ int main(int argc, char** argv)
   char* report_line = (char* ) calloc(bit_depth + 1, sizeof(char));
   if ((fp = fopen(argv[1], "r")) == NULL) {
     printf("Error: could not open file %s\n", argv[1]);
+    free(report_line);
     return 1;
   }
   while (fscanf(fp, "%s", report_line) != EOF) {
