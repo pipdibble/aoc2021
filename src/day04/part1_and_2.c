@@ -150,12 +150,9 @@ bool winnerCheck(DabberGrid *g)
 long calcScore(DabberGrid *g, int last_number)
 {
   long score = 0;
-  for (int row = 0; row < 5; row++) {
-    for (int column = 0; column < 5; column++) {
-      int offset = (row * 5) + column;
-      if (!g->grid[offset].dabbed){
-        score += g->grid[offset].number;
-      }
+  for (int offset = 0; offset < 25; offset++) {
+    if (!g->grid[offset].dabbed) {
+      score += g->grid[offset].number;
     }
   }
   score *= last_number;
