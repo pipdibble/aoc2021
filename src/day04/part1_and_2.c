@@ -13,7 +13,6 @@ typedef struct {
 } DabberGrid;
 
 DabberNumber newDabberNumber(int number);
-DabberGrid newDabberGrid(int* numbers);
 bool dabNumber(DabberGrid *g, int number);
 bool winnerCheck(DabberGrid *g);
 long calcScore(DabberGrid *g, int last_number);
@@ -25,12 +24,8 @@ int main (int argc, char **argv)
     int num_players;
     int *nums_called;
     int num_nums;
-  } bingo;
-  bingo.num_players = 0;
-  bingo.num_nums = 0;
+  } bingo = { NULL, 0, NULL, 0 };
   FILE *fp;
-  int file_char;
-  int number = 0;
   if (argc < 2) {
     printf("Usage: part1 <input filename>\n");
     return 1;
@@ -61,24 +56,36 @@ int main (int argc, char **argv)
     bingo.num_nums++;
   }
   int num_per_grid = 0;
-  while (fscanf(fp, "%999s", file_line) != 0 && !feof(fp)) {
-    int a = strtol(file_line, NULL, 10);
-    if (a == 0 && errno == EINVAL)
-      continue;
-    if (bingo.num_players == 0) {
+  int a = 0;
+  while (fscanf(fp, "%d", &a) != 0 && !feof(fp)) {
+    if (bingo.num_players == 0 && num_per_grid == 0) {
       bingo.player = (DabberGrid*) malloc((bingo.num_players + 1) * sizeof(DabberGrid));
-      bingo.num_players++;
-    }
-    if (num_per_grid == 25) {
+      if (bingo.player == NULL) {
+        fclose(fp);
+        free(bingo.nums_called);
+        printf("Issue allocating memory.\n");
+        return 1;
+      }
+    } else if (num_per_grid == 25) {
       num_per_grid = 0;
-      bingo.player = (DabberGrid*) realloc(bingo.player, (bingo.num_players + 1) * sizeof(DabberGrid));
       bingo.num_players++;
+      DabberGrid *temp;
+      temp = (DabberGrid*) realloc(bingo.player, (bingo.num_players + 1) * sizeof(DabberGrid));
+      if (temp == NULL) {
+        fclose(fp);
+        free(bingo.nums_called);
+        free(bingo.player);
+        printf("Issue reallocating memory.\n");
+        return 1;
+      } else {
+        bingo.player = temp;
+      }
     }
-    bingo.player[bingo.num_players - 1].grid[num_per_grid] = newDabberNumber(a);
-    bingo.player[bingo.num_players - 1].winner = false;
+    bingo.player[bingo.num_players].grid[num_per_grid] = newDabberNumber(a);
+    bingo.player[bingo.num_players].winner = false;
     num_per_grid++;
   }
-  bool found = false;
+  bingo.num_players++;
   for (int numbers = 0; numbers < bingo.num_nums; numbers++) {
     int number = bingo.nums_called[numbers];
     for (int players = 0; players < bingo.num_players; players++) {
@@ -107,14 +114,6 @@ DabberNumber newDabberNumber(int number)
 {
   DabberNumber newNum = { number, false };
   return newNum;
-}
-
-DabberGrid newDabberGrid(int* numbers)
-{
-  DabberGrid newGrid;
-  for (int i = 0; i < 25; i++) {
-    newGrid.grid[i] = newDabberNumber(numbers[i]);
-  }
 }
 
 bool dabNumber(DabberGrid *g, int number)
